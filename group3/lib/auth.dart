@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 typedef OAuthSignIn = void Function();
 
@@ -499,15 +500,27 @@ class _AuthGateState extends State<AuthGate> {
   Future<void> _signInWithGoogle() async {
     setIsLoading();
     try {
-      GoogleAuthProvider googleProvider = GoogleAuthProvider();
+      // GoogleAuthProvider googleProvider = GoogleAuthProvider();
 
       // googleProvider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-      googleProvider.setCustomParameters({
-        'login_hint': 'user@example.com'
-      });
+      // googleProvider.setCustomParameters({
+      //   'login_hint': 'user@example.com'
+      // });
 
-      // Once signed in, return the UserCredential
-      await _auth.signInWithPopup(googleProvider);
+      // Trigger the Google Authentication flow.
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser != null) {
+        // Obtain the auth details from the request.
+        final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+        // Create a new credential.
+        final OAuthCredential googleCredential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        // Sign in to Firebase with the Google [UserCredential].
+        await _auth.signInWithCredential(googleCredential);
+      }
     } on FirebaseAuthException catch (e) {
       setState(() {
         error = '${e.message}';
@@ -596,4 +609,29 @@ class _AuthGateState extends State<AuthGate> {
       setIsLoading();
     }
   }*/
+}
+
+StreamBuilder<User?> authenticatedFlipFlop(
+    {required Widget authenticated, required Widget unauthenticated}) =>
+  StreamBuilder<User?>(
+    stream: _auth.authStateChanges(),
+    builder: (context, snapshot) {
+      return snapshot.hasData ? authenticated : unauthenticated;
+    },
+  );
+
+class LogoutButton extends StatelessWidget {
+  static const String label = "Log out";
+
+  const LogoutButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) =>
+    authenticatedFlipFlop(
+        authenticated: ElevatedButton(
+            onPressed: _auth.signOut,
+            child: const Text(label)
+        ),
+        unauthenticated: const SizedBox.shrink()
+    );
 }
