@@ -6,8 +6,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:twitter_login/twitter_login.dart';
 
-typedef OAuthSignIn = void Function();
+import 'config.dart';
+
+typedef OAuthSignIn = VoidCallback;
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -84,14 +87,14 @@ class _AuthGateState extends State<AuthGate> {
     if (kIsWeb) {
       authButtons = {
         Buttons.Google: _signInWithGoogle,
-        /*Buttons.GitHub: _signInWithGitHub,
-        Buttons.Twitter: _signInWithTwitter,*/
+        /*Buttons.GitHub: _signInWithGitHub,*/
+        Buttons.Twitter: _signInWithTwitter,
       };
     } else {
       authButtons = {
         if (!Platform.isMacOS) Buttons.Google: _signInWithGoogle,
-        /*if (!Platform.isMacOS) Buttons.GitHub: _signInWithGitHub,
-        if (!Platform.isMacOS) Buttons.Twitter: _signInWithTwitter,*/
+        /*if (!Platform.isMacOS) Buttons.GitHub: _signInWithGitHub,*/
+        if (!Platform.isMacOS) Buttons.Twitter: _signInWithTwitter,
       };
     }
   }
@@ -530,7 +533,7 @@ class _AuthGateState extends State<AuthGate> {
     }
   }
 
-/*  Future<void> _signInWithTwitter() async {
+  Future<void> _signInWithTwitter() async {
     setIsLoading();
     try {
       if (kIsWeb) {
@@ -538,7 +541,7 @@ class _AuthGateState extends State<AuthGate> {
         TwitterAuthProvider twitterProvider = TwitterAuthProvider();
 
         // Once signed in, return the UserCredential
-        await FirebaseAuth.instance.signInWithPopup(twitterProvider);
+        await _auth.signInWithPopup(twitterProvider);
       } else {
         // Create a TwitterLogin instance
         final twitterLogin = TwitterLogin(
@@ -548,7 +551,11 @@ class _AuthGateState extends State<AuthGate> {
         );
 
         // Trigger the sign-in flow
-        final authResult = await twitterLogin.login();
+        final authResult = await twitterLogin.loginV2();
+        print(authResult.status);
+        if (authResult.status == TwitterLoginStatus.error) {
+          print(authResult.errorMessage);
+        }
 
         if (authResult.status == TwitterLoginStatus.loggedIn) {
           // Create a credential from the access token
@@ -570,7 +577,7 @@ class _AuthGateState extends State<AuthGate> {
     }
   }
 
-  Future<void> _signInWithGitHub() async {
+  /* Future<void> _signInWithGitHub() async {
     setIsLoading();
 
     try {
