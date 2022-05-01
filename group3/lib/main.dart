@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-import 'auth.dart';
+import 'auth.dart'; //authentication view
+import 'nav_drawer.dart'; //navigation drawer/ sidebar
+import 'previous_days.dart'; //previous days view
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -60,6 +62,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
     Scaffold(
+      drawer: NavDrawer(), // this is our sidebar
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
