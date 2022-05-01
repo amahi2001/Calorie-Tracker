@@ -5,6 +5,7 @@ import 'firebase_options.dart';
 import 'auth.dart'; //authentication view
 import 'nav_drawer.dart'; //navigation drawer/ sidebar
 import 'previous_days.dart'; //previous days view
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -22,12 +23,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Calorie Tracker',
       theme: ThemeData(
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            primary: Colors.blueAccent[400]
-          )
-        )
-      ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style:
+                  ElevatedButton.styleFrom(primary: Colors.blueAccent[400]))),
       home: const LoginPage(title: 'Calorie Tracker'),
     );
   }
@@ -42,13 +40,39 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late String food_name;
+  late int calories;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Text(widget.title),
+        actions: const [LogoutButton()],
+      ),
+      drawer: NavDrawer(), // this is our sidebar
+
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const []
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Enter Food Item',
+              ),
+            ),
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Enter Calorie value',
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            ElevatedButton(
+                onPressed: () async {
+                  print("submitted");
+                },
+                child: Text('Log intake'))
+          ],
         ),
       ),
     );
@@ -60,24 +84,13 @@ class LoginPage extends StatelessWidget {
   final String title;
 
   @override
-  Widget build(BuildContext context) =>
-    Scaffold(
-      drawer: NavDrawer(), // this is our sidebar
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(title),
-        actions: const [LogoutButton()],
-      ),
-      body: LayoutBuilder(
-        builder: (context, constraints) =>
-          SizedBox(
-            width: constraints.maxWidth,
-            child: authenticatedFlipFlop(
-                authenticated: MyHomePage(title: title),
-                unauthenticated: const AuthGate()),
-          )
-      ),
-    );
+  Widget build(BuildContext context) => Scaffold(
+        body: LayoutBuilder(
+            builder: (context, constraints) => SizedBox(
+                  width: constraints.maxWidth,
+                  child: authenticatedFlipFlop(
+                      authenticated: MyHomePage(title: title),
+                      unauthenticated: const AuthGate()),
+                )),
+      );
 }
-
