@@ -11,7 +11,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
           elevatedButtonTheme: ElevatedButtonThemeData(
               style:
                   ElevatedButton.styleFrom(primary: Colors.blueAccent[400]))),
-      home: const LoginPage(title: 'Calorie Tracker'),
+      home:  LoginPage(title: 'Calorie Tracker'),
     );
   }
 }
@@ -79,18 +79,26 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
         body: LayoutBuilder(
             builder: (context, constraints) => SizedBox(
                   width: constraints.maxWidth,
                   child: authenticatedFlipFlop(
-                      authenticated: MyHomePage(title: title),
+                      authenticated: MyHomePage(title: widget.title),
                       unauthenticated: const AuthGate()),
-                )),
+                )
+        ),
       );
+}
 }
