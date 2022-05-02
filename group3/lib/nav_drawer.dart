@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'previous_days.dart'; //previous days view
 
 class NavDrawer extends StatelessWidget {
+  const NavDrawer({Key? key}): super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -9,8 +11,8 @@ class NavDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            child: Text(
-              'Side menu',
+            child: const Text(
+              'Side Menu',
               style: TextStyle(color: Colors.white, fontSize: 25),
             ),
             decoration: BoxDecoration(
@@ -23,12 +25,12 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             //for previous days
-            leading: Icon(Icons.calendar_today),
-            title: Text('Previous Days'),
+            leading: const Icon(Icons.calendar_today),
+            title: const Text('Previous Days'),
             onTap: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PreviousDays()),
+                MaterialPageRoute(builder: (context) => const PreviousDays()),
               )
             },
           ),

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'appbar.dart';
 import 'firebase_options.dart';
 
 import 'auth.dart'; //authentication view
 import 'nav_drawer.dart'; //navigation drawer/ sidebar
-import 'previous_days.dart'; //previous days view
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
           elevatedButtonTheme: ElevatedButtonThemeData(
               style:
                   ElevatedButton.styleFrom(primary: Colors.blueAccent[400]))),
-      home:  LoginPage(title: 'Calorie Tracker'),
+      home: const HomePage(title: 'Calorie Tracker'),
     );
   }
 }
@@ -40,22 +40,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late String food_name;
+  late String foodName;
   late int calories;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-        actions: const [LogoutButton()],
-      ),
-      drawer: NavDrawer(), // this is our sidebar
-
+      appBar: appBar(title: widget.title),
+      drawer: const NavDrawer(),
       body: Center(
         child: Column(
-          children: [
+          children: const [
             TextField(
               decoration: InputDecoration(
                 hintText: 'Enter Food Item',
@@ -68,37 +63,43 @@ class _MyHomePageState extends State<MyHomePage> {
               keyboardType: TextInputType.number,
             ),
             ElevatedButton(
-                onPressed: () async {
-                  print("submitted");
-                },
-                child: Text('Log intake'))
+                onPressed: intakeSubmitted,
+                child: Text('Log intake')
+            )
           ],
         ),
-      ),
+      )
     );
   }
 }
 
-class LoginPage extends StatefulWidget {
+void intakeSubmitted() async => print("Submitted");
+
+class LoginPage extends StatelessWidget {
   const LoginPage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: appBar(title: title),
+      body: LayoutBuilder(
+          builder: (context, constraints) => SizedBox(
+                width: constraints.maxWidth,
+                child: const AuthGate(),
+              )),
+    );
+  }
 }
 
-class _LoginPageState extends State<LoginPage> {
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key, required this.title}) : super(key: key);
+  final String title;
+
   @override
-  Widget build(BuildContext context){
-    return Scaffold(
-        body: LayoutBuilder(
-            builder: (context, constraints) => SizedBox(
-                  width: constraints.maxWidth,
-                  child: authenticatedFlipFlop(
-                      authenticated: MyHomePage(title: widget.title),
-                      unauthenticated: const AuthGate()),
-                )
-        ),
-      );
-}
+  Widget build(BuildContext context) {
+    return authenticatedFlipFlop(
+        authenticated: MyHomePage(title: title),
+        unauthenticated: LoginPage(title: title));
+  }
 }
