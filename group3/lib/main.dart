@@ -58,9 +58,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          body: TabBarView(
+          body: const TabBarView(
             children: [
-              add_food(),
+              AddFood(),
               PreviousDays(),
               LogoutButton(),
             ],

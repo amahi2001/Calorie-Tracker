@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 
 void intakeSubmitted() async => print("Submitted");
 
-class add_food extends StatefulWidget {
-  const add_food({Key? key}) : super(key: key);
+class AddFood extends StatefulWidget {
+  const AddFood({Key? key}) : super(key: key);
 
   @override
-  State<add_food> createState() => _add_foodState();
+  State<AddFood> createState() => AddFoodState();
 }
 
-class _add_foodState extends State<add_food> {
+class AddFoodState extends State<AddFood> {
   late String foodName;
   late int calories;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
