@@ -29,14 +29,35 @@ class _PreviousDaysState extends State<PreviousDays> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Previous Days')),
         body: TableCalendar(
+          /* inputs vars */
           //first day is the day user signed up
           firstDay: user_creation_date,
           //Last day is the last day of the current month
           lastDay: final_date,
           focusedDay: _focusedDay,
           calendarFormat: _calendarFormat,
+          startingDayOfWeek: StartingDayOfWeek.sunday,
+          daysOfWeekVisible: true,
+          /* styling */
+          calendarStyle: CalendarStyle(
+            isTodayHighlighted: true,
+            selectedDecoration: BoxDecoration(
+              color: Colors.blueAccent[400],
+              shape : BoxShape.rectangle,
+            ),
+          ),
+          headerStyle: HeaderStyle(
+            titleCentered: true,
+            formatButtonShowsNext: false,
+            formatButtonDecoration: BoxDecoration(
+              color: Colors.blueAccent[400],
+              borderRadius: BorderRadius.circular(5),
+            ),
+            formatButtonTextStyle: TextStyle(color: Colors.white,)
+          ),
+          
+          /* methods */
           selectedDayPredicate: (day) {
             // Use `selectedDayPredicate` to determine which day is currently selected.
             // If this returns true, then `day` will be marked as selected.
@@ -53,7 +74,8 @@ class _PreviousDaysState extends State<PreviousDays> {
                 _focusedDay = focusedDay;
               });
             }
-            print('Selected day $selectedDay');
+            // print('Selected day $selectedDay');
+            // print('Focused day $focusedDay');
           },
           onFormatChanged: (format) {
             if (_calendarFormat != format) {
