@@ -4,7 +4,8 @@ import 'appbar.dart';
 import 'firebase_options.dart';
 
 import 'auth.dart'; //authentication view
-import 'nav_drawer.dart'; //navigation drawer/ sidebar
+import 'add_food.dart'; //add food view
+import 'previous_days.dart'; //previous days view
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,40 +41,33 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late String foodName;
-  late int calories;
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBar(title: widget.title),
-      drawer: const NavDrawer(),
-      body: Center(
-        child: Column(
-          children: const [
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Enter Food Item',
-              ),
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            // Here we take the value from the MyHomePage object that was created by
+            // the App.build method, and use it to set our appbar title.
+            title: Text(widget.title),
+            bottom: TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.dinner_dining), text: 'Add Food'),
+                Tab(icon: Icon(Icons.history), text: 'Previous Days'),
+              ],
             ),
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Enter Calorie value',
-              ),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton(
-                onPressed: intakeSubmitted,
-                child: Text('Log intake')
-            )
-          ],
-        ),
-      )
-    );
+            actions: const [LogoutButton()],
+          ),
+          body: TabBarView(
+            children: [
+              add_food(),
+              PreviousDays(),
+            ],
+          ),
+        )
+      );
   }
 }
-
-void intakeSubmitted() async => print("Submitted");
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key, required this.title}) : super(key: key);
