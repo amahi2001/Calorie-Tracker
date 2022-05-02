@@ -44,24 +44,25 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 2,
+        length: 3,
         child: Scaffold(
           appBar: AppBar(
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.
             title: Text(widget.title),
-            bottom: TabBar(
+            bottom: const TabBar(
               tabs: [
                 Tab(icon: Icon(Icons.dinner_dining), text: 'Add Food'),
                 Tab(icon: Icon(Icons.history), text: 'Previous Days'),
+                Tab(icon: Icon(Icons.logout), text: 'Logout',),
               ],
             ),
-            actions: const [LogoutButton()],
           ),
           body: TabBarView(
             children: [
               add_food(),
               PreviousDays(),
+              LogoutButton(),
             ],
           ),
         )
