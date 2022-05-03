@@ -1,14 +1,58 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:group3/mainscreen.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'firestore.dart';
 // import 'package:flutter/foundation.dart';
 
 class meal {
   final String title;
   meal({required this.title});
   String toString() => this.title;
+}
+
+Future<List<Meal>> getData(DateTime day) async {
+  List<Meal> todayMeals = [];
+
+  if (FirebaseAuth.instance.currentUser != null) {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+
+    DateTime now = DateTime.now();
+    String today = Timestamp.fromDate(DateTime(now.year, now.month, now.day))
+        .seconds
+        .toString();
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('meals')
+        .where('date', isEqualTo: today)
+        .get()
+        .then((value) {
+      value.docs.forEach((doc) {
+        Meal meal = Meal.fromJson(doc.data());
+
+        for (var i = 1; i <= 5; i++) {
+          if (doc.data()['food$i']['name'] != '') {
+            Food food = Food.fromJson(doc.data()['food$i']);
+            if (food.cal == '') {
+              food.cal = '0';
+            }
+            meal.foods.add(food);
+          }
+        }
+        todayMeals.add(meal);
+      });
+    });
+  }
+  for(var meal in todayMeals){
+    for (var food in meal.foods) {
+      print(food.cal);
+    }
+  }
+  return todayMeals;
 }
 
 class PreviousDays extends StatefulWidget {
@@ -39,8 +83,7 @@ class _PreviousDaysState extends State<PreviousDays> {
         .collection('users')
         .doc(user.uid)
         .collection('meals');
-    }
-  
+  }
 
   @override
   void dispose() {
@@ -55,6 +98,8 @@ class _PreviousDaysState extends State<PreviousDays> {
     user = FirebaseAuth.instance.currentUser!;
     user_creation_date = user.metadata.creationTime!;
     super.initState();
+    List meals = [];
+    getData(_selectedDay);
   }
 
   @override

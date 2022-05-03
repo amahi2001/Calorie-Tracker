@@ -4,8 +4,11 @@ import 'appbar.dart';
 import 'firebase_options.dart';
 
 import 'auth.dart'; //authentication view
-import 'add_food.dart'; //add food view
 import 'previous_days.dart'; //previous days view
+import 'mainscreen.dart'; //main screen view
+
+
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           body: const TabBarView(
             children: [
-              AddFood(),
+              MealList(),
               PreviousDays(),
               LogoutButton(),
             ],
