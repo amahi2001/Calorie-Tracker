@@ -1,11 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/foundation.dart';
 
-class Event {
+class meal {
   final String title;
-  Event({required this.title});
+  meal({required this.title});
   String toString() => this.title;
 }
 
@@ -17,7 +19,7 @@ class PreviousDays extends StatefulWidget {
 
 class _PreviousDaysState extends State<PreviousDays> {
   TextEditingController _eventController = TextEditingController();
-  late Map<DateTime, List<Event>> selectedEvents;
+  late Map<DateTime, List<meal>> selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
@@ -28,9 +30,17 @@ class _PreviousDaysState extends State<PreviousDays> {
   DateTime final_date =
       DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
 
-  List<Event> _getEventsfromDay(DateTime day) {
+  List<meal> _getEventsfromDay(DateTime day) {
     return selectedEvents[day] ?? [];
   }
+
+  void populate_events(List<meal> events) {
+    CollectionReference collectionReference = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('meals');
+    }
+  
 
   @override
   void dispose() {
@@ -137,23 +147,23 @@ class _PreviousDaysState extends State<PreviousDays> {
             itemCount: _getEventsfromDay(_selectedDay).length,
             itemBuilder: (context, index) {
               return Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 12.0,
-                        vertical: 4.0,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          _getEventsfromDay(_selectedDay)[index].toString(),
-                          style: TextStyle(
-                            fontSize: 18.0,
-                          ),
-                        ),
-                      ),
-                    );
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 12.0,
+                  vertical: 4.0,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(),
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: ListTile(
+                  title: Text(
+                    _getEventsfromDay(_selectedDay)[index].toString(),
+                    style: TextStyle(
+                      fontSize: 18.0,
+                    ),
+                  ),
+                ),
+              );
             },
           ),
         ],
@@ -180,28 +190,25 @@ class _PreviousDaysState extends State<PreviousDays> {
                         onPressed: () {
                           if (_eventController.text.isEmpty) {
                             //if event name is empty => do nothing
-                            
+
                           } else {
                             //if event name is not empty => add event
                             if (selectedEvents[_selectedDay] != null) {
                               //if there is already an event on that day
                               selectedEvents[_selectedDay]!
-                                  .add(Event(title: _eventController.text));
+                                  .add(meal(title: _eventController.text));
                             } else {
                               //if there is no event on that day
                               selectedEvents[_selectedDay] = [
-                                Event(title: _eventController.text)
+                                meal(title: _eventController.text)
                               ];
                             }
                           }
                           Navigator.pop(context);
-                            _eventController.clear();
-                            setState(() {
-                              
-                            });
-                            return;
-                        }
-                    ),
+                          _eventController.clear();
+                          setState(() {});
+                          return;
+                        }),
                   ],
                 ),
               ),
