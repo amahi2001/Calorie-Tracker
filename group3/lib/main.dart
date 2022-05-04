@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
-
 import 'auth.dart'; //authentication view
 import 'previous_days.dart'; //previous days view
 import 'mainscreen.dart'; //main screen view
@@ -60,9 +59,12 @@ class _MyHomePageState extends State<MyHomePage> {
               title: Text(widget.title),
               bottom: const TabBar(
                 tabs: [
-                  Tab(icon: Icon(Icons.dinner_dining), text: 'Add Food'),
+                  Tab(icon: Icon(Icons.home_outlined), text: 'home'),
                   Tab(icon: Icon(Icons.history), text: 'Previous Days'),
-                  Tab(icon: Icon(Icons.logout), text: 'Logout',),
+                  Tab(
+                    icon: Icon(Icons.logout),
+                    text: 'Logout',
+                  ),
                 ],
               ),
             ),
@@ -74,9 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           );
-        }
-      )
-    );
+        }));
   }
 }
 
