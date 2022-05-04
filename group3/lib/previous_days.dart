@@ -161,8 +161,48 @@ class _Quickview extends State<QuickView> {
                 TotalCal = TotalCal + int.parse(food.cal);
               }
             }
-            return Text(TotalCal.toString());
+            List meals = [];
+            return QuickViewCard(
+                numberOfMeals: (snapshot.data?.length ?? 0).toString(),
+                totalCal: TotalCal.toString());
           }
         });
+  }
+}
+
+class QuickViewCard extends StatelessWidget {
+  const QuickViewCard(
+      {Key? key, required this.numberOfMeals, required this.totalCal})
+      : super(key: key);
+
+  final String numberOfMeals;
+  final String totalCal;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+        child: Card(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ListTile(
+            leading: Icon(Icons.dining_outlined),
+            title: Text("Total Calories: " + totalCal),
+            subtitle: Text(numberOfMeals + ' meals'),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              TextButton(
+                child: const Text('DETAILS'),
+                onPressed: () {/* ... */},
+              ),
+              const SizedBox(width: 8),
+              const SizedBox(width: 8),
+            ],
+          ),
+        ],
+      ),
+    ));
   }
 }
