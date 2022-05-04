@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:group3/firestore.dart';
 
 import 'mealcard.dart';
-import 'newmeal.dart';
 
 class DayInfo extends StatefulWidget {
   const DayInfo({Key? key, required this.selectedDay}) : super(key: key);
@@ -27,6 +26,7 @@ class _DayInfo extends State<DayInfo> {
     meals = getData(widget.selectedDay);
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(),
@@ -34,22 +34,34 @@ class _DayInfo extends State<DayInfo> {
             future: meals,
             builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
               if (!snapshot.hasData) {
-                return CircularProgressIndicator();
+                return Center(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          SizedBox(
+                            child: CircularProgressIndicator.adaptive(),
+                            width: 50,
+                            height: 50,
+                          )
+                        ]
+                    )
+                );
               } else {
-                int TotalCal = 0;
+                int totalCal = 0;
                 for (var meal in snapshot.data!) {
                   for (var food in meal.foods) {
-                    TotalCal = TotalCal + int.parse(food.cal);
+                    totalCal = totalCal + int.parse(food.cal);
                   }
                 }
                 return Column(
                   children: [
-                    TodayTotal(total: TotalCal.toString(), max: '1400'),
+                    TodayTotal(total: totalCal.toString(), max: '1400'),
                     Container(
                         margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                         alignment: Alignment.centerLeft,
                         child: Container(
-                          margin: EdgeInsets.all(15),
+                          margin: const EdgeInsets.all(15),
                           child: const Text(
                             "Your previous meals",
                             style: TextStyle(
@@ -121,7 +133,7 @@ class _TodayTotal extends State<TodayTotal> {
                     child: Stack(
                       children: <Widget>[
                         Center(
-                          child: Container(
+                          child: SizedBox(
                             width: 180,
                             height: 180,
                             child: CircularProgressIndicator(
@@ -133,7 +145,7 @@ class _TodayTotal extends State<TodayTotal> {
                         ),
                         Center(
                           child: Text(widget.total,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 50,
                                 color: Colors.white,
