@@ -49,30 +49,29 @@ class _MyHomePageState extends State<MyHomePage> {
           final controller = DefaultTabController.of(context)!;
           controller.addListener(() {
             if (controller.index == controller.length - 1) {
-              print('swipe');
-              showDialog<String>(
-                barrierDismissible: false,
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                  title: const Text('AlertDialog Title'),
-                  content: const Text('AlertDialog description'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        controller.animateTo(0);
-                        Navigator.pop(context, 'Cancel');
-                      },
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context, 'OK');
-                      },
-                      child: const Text('OK'),
-                    ),
-                  ],
-                ),
-              );
+              // showDialog<String>(
+              //   barrierDismissible: false,
+              //   context: context,
+              //   builder: (BuildContext context) => AlertDialog(
+              //     title: const Text('AlertDialog Title'),
+              //     content: const Text('AlertDialog description'),
+              //     actions: <Widget>[
+              //       TextButton(
+              //         onPressed: () {
+              //           controller.animateTo(0);
+              //           Navigator.pop(context, 'Cancel');
+              //         },
+              //         child: const Text('Cancel'),
+              //       ),
+              //       TextButton(
+              //         onPressed: () {
+              //           Navigator.pop(context, 'OK');
+              //         },
+              //         child: const Text('OK'),
+              //       ),
+              //     ],
+              //   ),
+              // );
             }
           });
           return Scaffold(
@@ -91,8 +90,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         barrierDismissible: false,
                         context: context,
                         builder: (BuildContext context) => AlertDialog(
-                          title: const Text('AlertDialog Title'),
-                          content: const Text('AlertDialog description'),
+                          title: const Text('Log Out'),
+                          content:
+                              const Text('Are you sure you want to log out?'),
                           actions: <Widget>[
                             TextButton(
                               onPressed: () {
@@ -101,7 +101,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: const Text('Cancel'),
                             ),
                             TextButton(
-                              onPressed: () => Navigator.pop(context, 'OK'),
+                              onPressed: () {
+                                Navigator.pop(context, 'OK');
+                                FirebaseAuth.instance.signOut();
+                              },
                               child: const Text('OK'),
                             ),
                           ],
@@ -128,6 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             body: const TabBarView(
+              physics: NeverScrollableScrollPhysics(),
               children: [
                 MealList(),
                 PreviousDays(),
