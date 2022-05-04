@@ -49,7 +49,30 @@ class _MyHomePageState extends State<MyHomePage> {
           final controller = DefaultTabController.of(context)!;
           controller.addListener(() {
             if (controller.index == controller.length - 1) {
-              FirebaseAuth.instance.signOut();
+              print('swipe');
+              showDialog<String>(
+                barrierDismissible: false,
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text('AlertDialog Title'),
+                  content: const Text('AlertDialog description'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        controller.animateTo(0);
+                        Navigator.pop(context, 'Cancel');
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, 'OK');
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
             }
           });
           return Scaffold(
@@ -57,13 +80,49 @@ class _MyHomePageState extends State<MyHomePage> {
               // Here we take the value from the MyHomePage object that was created by
               // the App.build method, and use it to set our appbar title.
               title: Text(widget.title),
-              bottom: const TabBar(
+              bottom: TabBar(
                 tabs: [
                   Tab(icon: Icon(Icons.home_outlined), text: 'home'),
                   Tab(icon: Icon(Icons.history), text: 'Previous Days'),
-                  Tab(
-                    icon: Icon(Icons.logout),
-                    text: 'Logout',
+                  TextButton(
+                    style: TextButton.styleFrom(),
+                    onPressed: () {
+                      showDialog<String>(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('AlertDialog Title'),
+                          content: const Text('AlertDialog description'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, 'Cancel');
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'OK'),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    child: Column(children: [
+                      Container(
+                        padding: EdgeInsets.only(bottom: 10),
+                        child: Icon(
+                          Icons.logout_outlined,
+                          color: Color.fromARGB(180, 255, 255, 255),
+                          size: 23,
+                        ),
+                      ),
+                      Text(
+                        'Log Out',
+                        style: TextStyle(
+                            color: Color.fromARGB(180, 255, 255, 255)),
+                      ),
+                    ]),
                   ),
                 ],
               ),
