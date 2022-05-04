@@ -626,19 +626,3 @@ StreamBuilder<User?> authenticatedFlipFlop(
       return snapshot.hasData ? authenticated : unauthenticated;
     },
   );
-
-class LogoutButton extends StatelessWidget {
-  static const String label = "Log out";
-
-  const LogoutButton({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) =>
-    authenticatedFlipFlop(
-        authenticated: ElevatedButton(
-            onPressed: _auth.signOut,
-            child: const Text(label)
-        ),
-        unauthenticated: const SizedBox.shrink()
-    );
-}

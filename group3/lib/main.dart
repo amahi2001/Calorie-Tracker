@@ -1,14 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'appbar.dart';
-import 'firebase_options.dart';
 
+import 'firebase_options.dart';
 import 'auth.dart'; //authentication view
 import 'previous_days.dart'; //previous days view
 import 'mainscreen.dart'; //main screen view
-
-
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,28 +45,37 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return DefaultTabController(
         length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            // Here we take the value from the MyHomePage object that was created by
-            // the App.build method, and use it to set our appbar title.
-            title: Text(widget.title),
-            bottom: const TabBar(
-              tabs: [
-                Tab(icon: Icon(Icons.dinner_dining), text: 'Add Food'),
-                Tab(icon: Icon(Icons.history), text: 'Previous Days'),
-                Tab(icon: Icon(Icons.logout), text: 'Logout',),
+        child: Builder(builder: (context) {
+          final controller = DefaultTabController.of(context)!;
+          controller.addListener(() {
+            if (controller.index == controller.length - 1) {
+              FirebaseAuth.instance.signOut();
+            }
+          });
+          return Scaffold(
+            appBar: AppBar(
+              // Here we take the value from the MyHomePage object that was created by
+              // the App.build method, and use it to set our appbar title.
+              title: Text(widget.title),
+              bottom: const TabBar(
+                tabs: [
+                  Tab(icon: Icon(Icons.dinner_dining), text: 'Add Food'),
+                  Tab(icon: Icon(Icons.history), text: 'Previous Days'),
+                  Tab(icon: Icon(Icons.logout), text: 'Logout',),
+                ],
+              ),
+            ),
+            body: const TabBarView(
+              children: [
+                MealList(),
+                PreviousDays(),
+                SizedBox.shrink() // need a widget for the logout tab
               ],
             ),
-          ),
-          body: const TabBarView(
-            children: [
-              MealList(),
-              PreviousDays(),
-              LogoutButton(),
-            ],
-          ),
-        )
-      );
+          );
+        }
+      )
+    );
   }
 }
 
@@ -80,7 +86,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(title: title),
+      appBar: AppBar(title: Text(title)),
       body: LayoutBuilder(
           builder: (context, constraints) => SizedBox(
                 width: constraints.maxWidth,
