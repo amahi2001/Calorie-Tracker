@@ -2,114 +2,65 @@ import 'package:flutter/material.dart';
 import 'package:group3/firestore.dart';
 
 import 'mealcard.dart';
+import 'newmeal.dart';
 
-class DayInfo extends StatefulWidget {
-  const DayInfo({Key? key, required this.selectedDay}) : super(key: key);
-
-  final DateTime selectedDay;
-
-  @override
-  State<DayInfo> createState() => _DayInfo();
-}
-
-class _DayInfo extends State<DayInfo> {
-  void retrieveData() {
-    meals = getData(widget.selectedDay);
-    setState(() {});
-  }
-
-  Future<List<Meal>> meals = Future.value([]);
-
-  @override
-  void initState() {
-    super.initState();
-    meals = getData(widget.selectedDay);
-  }
+class DayInfo extends StatelessWidget {
+  const DayInfo({Key? key, required this.meals, required this.date})
+      : super(key: key);
+  final List<Meal> meals;
+  final String date;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
-        body: FutureBuilder(
-            future: meals,
-            builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          SizedBox(
-                            child: CircularProgressIndicator.adaptive(),
-                            width: 50,
-                            height: 50,
-                          )
-                        ]
-                    )
-                );
-              } else {
-                int totalCal = 0;
-                for (var meal in snapshot.data!) {
-                  for (var food in meal.foods) {
-                    totalCal = totalCal + int.parse(food.cal);
+      appBar: AppBar(
+        title: Text(date),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            TodayTotal(total: '300', max: '1400'),
+            Container(
+                margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  margin: EdgeInsets.all(15),
+                  child: const Text(
+                    "Your previous meals",
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )),
+            Expanded(
+              child: ListView.builder(
+                itemCount: meals.length,
+                itemBuilder: (context, index) {
+                  int calories = 0;
+                  for (var food in meals[index].foods) {
+                    calories = calories + int.parse(food.cal);
                   }
-                }
-                return Column(
-                  children: [
-                    TodayTotal(total: totalCal.toString(), max: '1400'),
-                    Container(
-                        margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          margin: const EdgeInsets.all(15),
-                          child: const Text(
-                            "Your previous meals",
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        )),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) {
-                          int calories = 0;
-                          for (var food in snapshot.data![index].foods) {
-                            calories = calories + int.parse(food.cal);
-                          }
-                          return MealCard(
-                            id: snapshot.data![index].id,
-                            name: snapshot.data![index].name,
-                            calories: calories.toString(),
-                            foods: snapshot.data![index].foods,
-                            retrieveData: retrieveData,
-                          );
-                        },
-                      ),
-                    )
-                  ],
-                );
-              }
-            }));
+                  return OldMealCard(
+                    name: meals[index].name,
+                    calories: calories.toString(),
+                    foods: meals[index].foods,
+                  );
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
 
-class TodayTotal extends StatefulWidget {
-  const TodayTotal({
-    Key? key,
-    required this.total,
-    required this.max,
-  }) : super(key: key);
-
-  @override
-  State<TodayTotal> createState() => _TodayTotal();
-
+class TodayTotal extends StatelessWidget {
+  const TodayTotal({Key? key, required this.total, required this.max})
+      : super(key: key);
   final String total;
   final String max;
-}
-
-class _TodayTotal extends State<TodayTotal> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -133,19 +84,18 @@ class _TodayTotal extends State<TodayTotal> {
                     child: Stack(
                       children: <Widget>[
                         Center(
-                          child: SizedBox(
+                          child: Container(
                             width: 180,
                             height: 180,
                             child: CircularProgressIndicator(
-                              value: int.parse(widget.total) /
-                                  int.parse(widget.max),
+                              value: int.parse(total) / int.parse(max),
                               strokeWidth: 15,
                             ),
                           ),
                         ),
                         Center(
-                          child: Text(widget.total,
-                              style: const TextStyle(
+                          child: Text(total,
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 50,
                                 color: Colors.white,
@@ -166,7 +116,7 @@ class _TodayTotal extends State<TodayTotal> {
                     ),
                   ),
                   child: Text(
-                    "Daily Max: " + widget.max,
+                    "Daily Max: " + max,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -179,6 +129,78 @@ class _TodayTotal extends State<TodayTotal> {
           ),
         )
       ],
+    );
+  }
+}
+
+class OldMealCard extends StatefulWidget {
+  const OldMealCard(
+      {Key? key,
+      required this.name,
+      required this.calories,
+      required this.foods})
+      : super(key: key);
+
+  final String name;
+  final String calories;
+  final List<Food> foods;
+
+  @override
+  _OldMealCardState createState() => _OldMealCardState();
+}
+
+class _OldMealCardState extends State<OldMealCard> {
+  _OldMealCardState();
+
+  bool isTapped = false;
+
+  void showMeals() {
+    setState(() {
+      isTapped = !isTapped;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Card(
+        child: InkWell(
+          onTap: () {
+            showMeals();
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: [
+                  Expanded(
+                    child: ListTile(
+                      title: Text(widget.name),
+                      subtitle: Text(widget.calories + " Calories"),
+                    ),
+                  ),
+                ],
+              ),
+              Visibility(
+                visible: isTapped,
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(50, 0, 100, 10),
+                  child: Column(
+                      children: List.generate(widget.foods.length, (index) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(widget.foods[index].name),
+                        Text(widget.foods[index].cal + ' Cal'),
+                      ],
+                    );
+                  })),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
+import 'dayinfo.dart';
 import 'firestore.dart';
 
 GlobalKey<_Quickview> globalKey = GlobalKey();
@@ -103,13 +105,6 @@ class _PreviousDaysState extends State<PreviousDays> {
                   _selectedDay = selectedDay;
                   _focusedDay = focusedDay;
                 });
-
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => DayInfo(
-                //               selectedDay: selectedDay,
-                //             )));
               }
             },
             onFormatChanged: (format) => setState(() => _calendarFormat = format),
@@ -137,7 +132,6 @@ class _Quickview extends State<QuickView> {
   Future<List<Meal>> meals = Future.value([]);
 
   void retrieveData(DateTime selectedDay) {
-    print('asdasd');
     meals = getData(selectedDay);
     setState(() {});
   }
@@ -161,10 +155,22 @@ class _Quickview extends State<QuickView> {
                 TotalCal = TotalCal + int.parse(food.cal);
               }
             }
-            List meals = [];
-            return QuickViewCard(
-                numberOfMeals: (snapshot.data?.length ?? 0).toString(),
-                totalCal: TotalCal.toString());
+            // List meals = [];
+            return Column(
+              children: [
+                const Divider(
+                  height: 30,
+                  thickness: 1,
+                  color: Color.fromARGB(50, 0, 0, 0),
+                ),
+                QuickViewCard(
+                  numberOfMeals: (snapshot.data?.length ?? 0).toString(),
+                  totalCal: TotalCal.toString(),
+                  meals: snapshot.data!,
+                  selectedDay: widget.selectedDay,
+                ),
+              ],
+            );
           }
         });
   }
@@ -172,37 +178,69 @@ class _Quickview extends State<QuickView> {
 
 class QuickViewCard extends StatelessWidget {
   const QuickViewCard(
-      {Key? key, required this.numberOfMeals, required this.totalCal})
+      {Key? key,
+      required this.numberOfMeals,
+      required this.totalCal,
+      required this.meals,
+      required this.selectedDay})
       : super(key: key);
 
+  final List<Meal> meals;
   final String numberOfMeals;
   final String totalCal;
+  final DateTime selectedDay;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    if (totalCal != '0') {
+      return Center(
+          child: Card(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.dining_outlined),
+              title: Text("Total Calories: " + totalCal),
+              subtitle: Text(numberOfMeals + ' meals'),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                TextButton(
+                  child: const Text('DETAILS'),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DayInfo(
+                                  meals: meals,
+                                  date: DateFormat('EEEE, MMM d, yyyy')
+                                      .format(selectedDay),
+                                )));
+                  },
+                ),
+                const SizedBox(width: 8),
+                const SizedBox(width: 8),
+              ],
+            ),
+          ],
+        ),
+      ));
+    } else {
+      return Center(
         child: Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ListTile(
-            leading: Icon(Icons.dining_outlined),
-            title: Text("Total Calories: " + totalCal),
-            subtitle: Text(numberOfMeals + ' meals'),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              TextButton(
-                child: const Text('DETAILS'),
-                onPressed: () {/* ... */},
-              ),
-              const SizedBox(width: 8),
-              const SizedBox(width: 8),
+              ListTile(
+                leading: Icon(Icons.dining_outlined),
+                title: Text("No meals logged on this day"),
+                subtitle: Text(numberOfMeals + ' meals'),
+              )
             ],
           ),
-        ],
-      ),
-    ));
+        ),
+      );
+    }
   }
 }
