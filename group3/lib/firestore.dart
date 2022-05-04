@@ -34,6 +34,7 @@ class Meal {
 
   final String name;
   final String date;
+  String id = '';
   List<Food> foods = [];
 
   Map<String, Object?> toJson() {
@@ -61,7 +62,6 @@ Future<List<Meal>> getTodayData() async {
         .then((value) {
       value.docs.forEach((doc) {
         Meal meal = Meal.fromJson(doc.data());
-
         for (var i = 1; i <= 5; i++) {
           if (doc.data()['food$i']['name'] != '') {
             Food food = Food.fromJson(doc.data()['food$i']);
@@ -69,17 +69,17 @@ Future<List<Meal>> getTodayData() async {
               food.cal = '0';
             }
             meal.foods.add(food);
+            meal.id = doc.id;
           }
         }
         todayMeals.add(meal);
       });
     });
   }
-  print('retrieved');
   return todayMeals;
 }
 
-void addMeal(String name, List<Food> foods) {
+Future<void> addMeal(String name, List<Food> foods) async {
   final String _name = name;
   final List<Food> _foods = foods;
 
@@ -106,7 +106,7 @@ void addMeal(String name, List<Food> foods) {
     // String jsonFoods = jsonEncode({'food1': cleanedFoods});
     // print(jsonFoods);
 
-    db.collection('users').doc(uid).collection('meals').add(
+    await db.collection('users').doc(uid).collection('meals').add(
       {
         'date': today,
         'name': _name,
@@ -132,5 +132,22 @@ void addMeal(String name, List<Food> foods) {
         },
       },
     );
+  }
+}
+
+Future<void> DeleteMeal(String mealID) async {
+  DateTime now = DateTime.now();
+  String today = Timestamp.fromDate(DateTime(now.year, now.month, now.day))
+      .seconds
+      .toString();
+  if (FirebaseAuth.instance.currentUser != null) {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+
+    await db
+        .collection('users')
+        .doc(uid)
+        .collection('meals')
+        .doc(mealID)
+        .delete();
   }
 }

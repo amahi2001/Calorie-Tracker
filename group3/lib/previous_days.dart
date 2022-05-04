@@ -13,48 +13,6 @@ class meal {
   String toString() => this.title;
 }
 
-Future<List<Meal>> getData(DateTime day) async {
-  List<Meal> todayMeals = [];
-
-  if (FirebaseAuth.instance.currentUser != null) {
-    String uid = FirebaseAuth.instance.currentUser!.uid;
-
-    DateTime now = DateTime.now();
-    String today = Timestamp.fromDate(DateTime(now.year, now.month, now.day))
-        .seconds
-        .toString();
-
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .collection('meals')
-        .where('date', isEqualTo: today)
-        .get()
-        .then((value) {
-      value.docs.forEach((doc) {
-        Meal meal = Meal.fromJson(doc.data());
-
-        for (var i = 1; i <= 5; i++) {
-          if (doc.data()['food$i']['name'] != '') {
-            Food food = Food.fromJson(doc.data()['food$i']);
-            if (food.cal == '') {
-              food.cal = '0';
-            }
-            meal.foods.add(food);
-          }
-        }
-        todayMeals.add(meal);
-      });
-    });
-  }
-  for(var meal in todayMeals){
-    for (var food in meal.foods) {
-      print(food.cal);
-    }
-  }
-  return todayMeals;
-}
-
 class PreviousDays extends StatefulWidget {
   const PreviousDays({Key? key}) : super(key: key);
   @override
@@ -99,7 +57,6 @@ class _PreviousDaysState extends State<PreviousDays> {
     user_creation_date = user.metadata.creationTime!;
     super.initState();
     List meals = [];
-    getData(_selectedDay);
   }
 
   @override
@@ -169,6 +126,11 @@ class _PreviousDaysState extends State<PreviousDays> {
                   _selectedDay = selectedDay;
                   _focusedDay = focusedDay;
                 });
+                String today = Timestamp.fromDate(DateTime(
+                        selectedDay.year, selectedDay.month, selectedDay.day))
+                    .seconds
+                    .toString();
+                print(today);
               }
               // print('Selected day $selectedDay');
               // print('Focused day $focusedDay');

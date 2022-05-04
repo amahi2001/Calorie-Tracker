@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:group3/firestore.dart';
 
 class NewMeal extends StatefulWidget {
@@ -25,7 +26,7 @@ class _NewMealState extends State<NewMeal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text("New Meal"),
         ),
@@ -70,11 +71,6 @@ class _NewMealState extends State<NewMeal> {
                 onPressed: () {
                   // Validate returns true if the form is valid, or false otherwise.
                   if (_formKey.currentState!.validate()) {
-                    // If the form is valid, display a snackbar. In the real world,
-                    // you'd often call a server or save the information in a database.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(MealName)),
-                    );
                     Food food1 = Food(
                         name: foodController1.text,
                         cal: caloriesController1.text);
@@ -92,7 +88,14 @@ class _NewMealState extends State<NewMeal> {
                         cal: caloriesController5.text);
 
                     List<Food> foods = [food1, food2, food3, food4, food5];
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(MealName + " added to todays meal's")),
+                    );
                     addMeal(MealName, foods);
+                    // If the form is valid, display a snackbar. In the real world,
+                    // you'd often call a server or save the information in a database.
+                    Navigator.pop(context);
                   }
                 },
                 child: const Text('Submit'),
@@ -140,10 +143,16 @@ class NewFoodField extends StatelessWidget {
               margin: EdgeInsets.all(4),
               child: TextFormField(
                 controller: caloriesController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
+                  counterText: '',
                   labelText: 'Calories',
                 ),
+                keyboardType: TextInputType.number,
+                maxLength: 4,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
               ),
             ),
           ),

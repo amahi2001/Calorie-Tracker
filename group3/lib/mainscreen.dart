@@ -85,9 +85,11 @@ class _MealList extends State<MealList> {
                         calories = calories + int.parse(food.cal);
                       }
                       return MealCard(
+                        id: snapshot.data![index].id,
                         name: snapshot.data![index].name,
                         calories: calories.toString(),
                         foods: snapshot.data![index].foods,
+                        retrieveData: retrieveData,
                       );
                     },
                   ),
@@ -162,8 +164,21 @@ class _TodayTotal extends State<TodayTotal> {
               ),
               Center(
                 child: Container(
-                  margin: const EdgeInsets.all(10),
-                  child: Text("Daily Max: " + widget.max),
+                  padding: const EdgeInsets.all(7),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Text(
+                    "Daily Max: " + widget.max,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                    ),
+                  ),
                 ),
               )
             ],
