@@ -1,17 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:group3/dayinfo.dart';
-import 'package:group3/mainscreen.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'firestore.dart';
-// import 'package:flutter/foundation.dart';
 
-class meal {
+class Meal {
   final String title;
-  meal({required this.title});
-  String toString() => this.title;
+  Meal({required this.title});
+
+  @override
+  String toString() => title;
 }
 
 class PreviousDays extends StatefulWidget {
@@ -21,28 +18,15 @@ class PreviousDays extends StatefulWidget {
 }
 
 class _PreviousDaysState extends State<PreviousDays> {
-  TextEditingController _eventController = TextEditingController();
-  late Map<DateTime, List<meal>> selectedEvents;
+  final TextEditingController _eventController = TextEditingController();
+  late Map<DateTime, List<Meal>> selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
-  late User user;
-  //date the user Created the account
-  late DateTime user_creation_date;
-  //last day of current month
-  DateTime final_date =
-      DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
-
-  List<meal> _getEventsfromDay(DateTime day) {
+  List<Meal> _getEventsfromDay(DateTime day) {
     return selectedEvents[day] ?? [];
   }
 
-  void populate_events(List<meal> events) {
-    CollectionReference collectionReference = FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('meals');
-  }
 
   @override
   void dispose() {
@@ -54,10 +38,7 @@ class _PreviousDaysState extends State<PreviousDays> {
   @override
   void initState() {
     selectedEvents = {};
-    user = FirebaseAuth.instance.currentUser!;
-    user_creation_date = user.metadata.creationTime!;
     super.initState();
-    List meals = [];
   }
 
   @override
@@ -68,9 +49,9 @@ class _PreviousDaysState extends State<PreviousDays> {
           TableCalendar(
             /* inputs vars */
             //first day is the day user signed up
-            firstDay: user_creation_date,
+            firstDay: FirebaseAuth.instance.currentUser!.metadata.creationTime!,
             //Last day is the last day of the current month
-            lastDay: final_date,
+            lastDay: DateTime.now(),
             focusedDay: _focusedDay,
             calendarFormat: _calendarFormat,
             startingDayOfWeek: StartingDayOfWeek.sunday,
@@ -104,7 +85,7 @@ class _PreviousDaysState extends State<PreviousDays> {
                   color: Colors.blueAccent[400],
                   borderRadius: BorderRadius.circular(5),
                 ),
-                formatButtonTextStyle: TextStyle(
+                formatButtonTextStyle: const TextStyle(
                   color: Colors.white,
                 )),
 
@@ -135,21 +116,11 @@ class _PreviousDaysState extends State<PreviousDays> {
                             )));
               }
             },
-            onFormatChanged: (format) {
-              if (_calendarFormat != format) {
-                // Call `setState()` when updating calendar format
-                setState(() {
-                  _calendarFormat = format;
-                });
-              }
-            },
-            onPageChanged: (focusedDay) {
-              // No need to call `setState()` here
-              _focusedDay = focusedDay;
-            },
+            onFormatChanged: (format) => setState(() => _calendarFormat = format),
+            onPageChanged: (focusedDay) => _focusedDay = focusedDay
           ),
           ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: _getEventsfromDay(_selectedDay).length,
             itemBuilder: (context, index) {
@@ -165,7 +136,7 @@ class _PreviousDaysState extends State<PreviousDays> {
                 child: ListTile(
                   title: Text(
                     _getEventsfromDay(_selectedDay)[index].toString(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18.0,
                     ),
                   ),
@@ -179,21 +150,21 @@ class _PreviousDaysState extends State<PreviousDays> {
           onPressed: () => showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: Text('Add Event'),
+                  title: const Text('Add Event'),
                   content: TextFormField(
                     controller: _eventController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Event Name',
                     ),
                   ),
                   actions: [
                     TextButton(
-                      child: Text('Cancel'),
+                      child: const Text('Cancel'),
                       onPressed: () => Navigator.pop(context),
                     ),
                     TextButton(
-                        child: Text('Add'),
+                        child: const Text('Add'),
                         onPressed: () {
                           if (_eventController.text.isEmpty) {
                             //if event name is empty => do nothing
@@ -203,11 +174,11 @@ class _PreviousDaysState extends State<PreviousDays> {
                             if (selectedEvents[_selectedDay] != null) {
                               //if there is already an event on that day
                               selectedEvents[_selectedDay]!
-                                  .add(meal(title: _eventController.text));
+                                  .add(Meal(title: _eventController.text));
                             } else {
                               //if there is no event on that day
                               selectedEvents[_selectedDay] = [
-                                meal(title: _eventController.text)
+                                Meal(title: _eventController.text)
                               ];
                             }
                           }
@@ -219,7 +190,7 @@ class _PreviousDaysState extends State<PreviousDays> {
                   ],
                 ),
               ),
-          label: Text('Add event (for testing)')),
+          label: const Text('Add event (for testing)')),
     );
   }
 }
