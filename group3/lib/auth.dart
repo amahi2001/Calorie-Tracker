@@ -278,7 +278,7 @@ class _AuthGateState extends State<AuthGate> {
                                 ],
                               ),
                             ),
-                          /*const SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           RichText(
                             text: TextSpan(
                               style: Theme.of(context).textTheme.bodyText1,
@@ -292,7 +292,7 @@ class _AuthGateState extends State<AuthGate> {
                                 ),
                               ],
                             ),
-                          ),*/
+                          ),
                         ],
                       ),
                     ),
@@ -347,7 +347,7 @@ class _AuthGateState extends State<AuthGate> {
     }
   }
 
-/*  Future<void> _anonymousAuth() async {
+  Future<void> _anonymousAuth() async {
     setIsLoading();
 
     try {
@@ -363,7 +363,7 @@ class _AuthGateState extends State<AuthGate> {
     } finally {
       setIsLoading();
     }
-  }*/
+  }
 
   Future<void> _emailAndPassword() async {
     if (formKey.currentState?.validate() ?? false) {
