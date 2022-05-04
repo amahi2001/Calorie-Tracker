@@ -59,7 +59,7 @@ class _MealCardState extends State<MealCard> {
                     iconSize: 20,
                     tooltip: 'Increase volume by 10',
                     onPressed: () {
-                      DeleteMeal(widget.id);
+                      deleteMeal(widget.id);
                       widget.retrieveData();
                     },
                   ),

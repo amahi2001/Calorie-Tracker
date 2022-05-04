@@ -4,16 +4,18 @@ import 'package:group3/firestore.dart';
 import 'mealcard.dart';
 import 'newmeal.dart';
 
-class MealList extends StatefulWidget {
-  const MealList({Key? key}) : super(key: key);
+class DayInfo extends StatefulWidget {
+  const DayInfo({Key? key, required this.selectedDay}) : super(key: key);
+
+  final DateTime selectedDay;
 
   @override
-  State<MealList> createState() => _MealList();
+  State<DayInfo> createState() => _DayInfo();
 }
 
-class _MealList extends State<MealList> {
+class _DayInfo extends State<DayInfo> {
   void retrieveData() {
-    meals = getData(DateTime.now());
+    meals = getData(widget.selectedDay);
     setState(() {});
   }
 
@@ -22,82 +24,62 @@ class _MealList extends State<MealList> {
   @override
   void initState() {
     super.initState();
-    meals = getData(DateTime.now());
+    meals = getData(widget.selectedDay);
   }
 
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: meals,
-        builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
-          if (!snapshot.hasData) {
-            return CircularProgressIndicator();
-          } else {
-            int TotalCal = 0;
-            for (var meal in snapshot.data!) {
-              for (var food in meal.foods) {
-                TotalCal = TotalCal + int.parse(food.cal);
-              }
-            }
-            return Column(
-              children: [
-                TodayTotal(total: TotalCal.toString(), max: '1400'),
-                Container(
-                  margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Today's Meals",
-                        style: TextStyle(
-                          fontSize: 17.5,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            shape: const CircleBorder(),
-                            padding: const EdgeInsets.all(10)),
-                        child: const Icon(
-                          Icons.add,
-                          size: 17.5,
-                        ),
-                        onPressed: () {
-                          Navigator.of(context)
-                              .push(new MaterialPageRoute(
-                                  builder: (context) => NewMeal()))
-                              .whenComplete(retrieveData);
-
-                          // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          //   return NewMeal();
-                          // }));
+    return Scaffold(
+        appBar: AppBar(),
+        body: FutureBuilder(
+            future: meals,
+            builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              } else {
+                int TotalCal = 0;
+                for (var meal in snapshot.data!) {
+                  for (var food in meal.foods) {
+                    TotalCal = TotalCal + int.parse(food.cal);
+                  }
+                }
+                return Column(
+                  children: [
+                    TodayTotal(total: TotalCal.toString(), max: '1400'),
+                    Container(
+                        margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          margin: EdgeInsets.all(15),
+                          child: const Text(
+                            "Your previous meals",
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          int calories = 0;
+                          for (var food in snapshot.data![index].foods) {
+                            calories = calories + int.parse(food.cal);
+                          }
+                          return MealCard(
+                            id: snapshot.data![index].id,
+                            name: snapshot.data![index].name,
+                            calories: calories.toString(),
+                            foods: snapshot.data![index].foods,
+                            retrieveData: retrieveData,
+                          );
                         },
                       ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      int calories = 0;
-                      for (var food in snapshot.data![index].foods) {
-                        calories = calories + int.parse(food.cal);
-                      }
-                      return MealCard(
-                        id: snapshot.data![index].id,
-                        name: snapshot.data![index].name,
-                        calories: calories.toString(),
-                        foods: snapshot.data![index].foods,
-                        retrieveData: retrieveData,
-                      );
-                    },
-                  ),
-                )
-              ],
-            );
-          }
-        });
+                    )
+                  ],
+                );
+              }
+            }));
   }
 }
 

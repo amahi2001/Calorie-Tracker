@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:group3/dayinfo.dart';
 import 'package:group3/mainscreen.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -126,14 +127,13 @@ class _PreviousDaysState extends State<PreviousDays> {
                   _selectedDay = selectedDay;
                   _focusedDay = focusedDay;
                 });
-                String today = Timestamp.fromDate(DateTime(
-                        selectedDay.year, selectedDay.month, selectedDay.day))
-                    .seconds
-                    .toString();
-                print(today);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DayInfo(
+                              selectedDay: selectedDay,
+                            )));
               }
-              // print('Selected day $selectedDay');
-              // print('Focused day $focusedDay');
             },
             onFormatChanged: (format) {
               if (_calendarFormat != format) {
