@@ -53,7 +53,7 @@ class _MealList extends State<MealList> {
             }
             return Column(
               children: [
-                TodayTotal(total: totalCal.toString(), max: '1400'),
+                TodayTotal(total: totalCal.toString(), max: '1500'),
                 Container(
                   margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                   alignment: Alignment.centerLeft,
@@ -78,7 +78,7 @@ class _MealList extends State<MealList> {
                         onPressed: () {
                           Navigator.of(context)
                               .push(MaterialPageRoute(
-                                  builder: (context) => NewMeal()))
+                                  builder: (context) => const NewMeal()))
                               .whenComplete(retrieveData);
 
                           // Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -131,6 +131,8 @@ class TodayTotal extends StatefulWidget {
 class _TodayTotal extends State<TodayTotal> {
   @override
   Widget build(BuildContext context) {
+    int numericalTotal = int.parse(widget.total);
+    int numericalMax = int.parse(widget.max);
     return Column(
       children: [
         Container(
@@ -156,8 +158,9 @@ class _TodayTotal extends State<TodayTotal> {
                             width: 180,
                             height: 180,
                             child: CircularProgressIndicator(
-                              value: int.parse(widget.total) /
-                                  int.parse(widget.max),
+                              color: numericalTotal >= numericalMax ? Colors.red :
+                                     numericalTotal >= numericalMax * .75 ? Colors.orange : null,
+                              value: numericalTotal / numericalMax,
                               strokeWidth: 15,
                             ),
                           ),

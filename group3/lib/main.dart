@@ -81,8 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
               title: Text(widget.title),
               bottom: TabBar(
                 tabs: [
-                  Tab(icon: Icon(Icons.home_outlined), text: 'home'),
-                  Tab(icon: Icon(Icons.history), text: 'Previous Days'),
+                  const Tab(icon: Icon(Icons.home_outlined), text: 'home'),
+                  const Tab(icon: Icon(Icons.history), text: 'Previous Days'),
                   TextButton(
                     style: TextButton.styleFrom(),
                     onPressed: () {
@@ -113,14 +113,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                     child: Column(children: [
                       Container(
-                        padding: EdgeInsets.only(bottom: 10),
-                        child: Icon(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: const Icon(
                           Icons.logout_outlined,
                           color: Color.fromARGB(180, 255, 255, 255),
                           size: 23,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Log Out',
                         style: TextStyle(
                             color: Color.fromARGB(180, 255, 255, 255)),

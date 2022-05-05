@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -60,7 +57,7 @@ Future<List<Meal>> getData(DateTime _day) async {
         .where('date', isEqualTo: selectedDay)
         .get()
         .then((value) {
-      value.docs.forEach((doc) {
+      for (var doc in value.docs) {
         Meal meal = Meal.fromJson(doc.data());
         for (var i = 1; i <= 5; i++) {
           if (doc.data()['food$i']['name'] != '') {
@@ -73,7 +70,7 @@ Future<List<Meal>> getData(DateTime _day) async {
           }
         }
         todayMeals.add(meal);
-      });
+      }
     });
   }
   return todayMeals;
@@ -81,7 +78,6 @@ Future<List<Meal>> getData(DateTime _day) async {
 
 Future<void> addMeal(String name, List<Food> foods) async {
   final String _name = name;
-  final List<Food> _foods = foods;
 
   DateTime now = DateTime.now();
   String today = Timestamp.fromDate(DateTime(now.year, now.month, now.day))
@@ -94,12 +90,12 @@ Future<void> addMeal(String name, List<Food> foods) async {
 
     List<Food> cleanedFoods = [];
 
-    foods.forEach((element) {
+    for (var element in foods) {
       if (element.name.isNotEmpty && element.cal.isNotEmpty) {
         cleanedFoods.add(element);
         newMeal.foods.add(element);
       }
-    });
+    }
     await db.collection('users').doc(uid).collection('meals').add(
       {
         'date': today,
@@ -130,10 +126,6 @@ Future<void> addMeal(String name, List<Food> foods) async {
 }
 
 Future<void> deleteMeal(String mealID) async {
-  DateTime now = DateTime.now();
-  String today = Timestamp.fromDate(DateTime(now.year, now.month, now.day))
-      .seconds
-      .toString();
   if (FirebaseAuth.instance.currentUser != null) {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 

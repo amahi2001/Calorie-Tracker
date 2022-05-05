@@ -3,14 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:group3/firestore.dart';
 
 class NewMeal extends StatefulWidget {
+  const NewMeal({Key? key}) : super(key: key);
+
   @override
   _NewMealState createState() => _NewMealState();
 }
 
 class _NewMealState extends State<NewMeal> {
   final _formKey = GlobalKey<FormState>();
-  _NewMealState();
-  String MealName = '';
+  String mealName = '';
 
   final TextEditingController foodController1 = TextEditingController();
   final TextEditingController caloriesController1 = TextEditingController();
@@ -42,7 +43,7 @@ class _NewMealState extends State<NewMeal> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a name';
                     }
-                    MealName = value;
+                    mealName = value;
                     return null;
                   },
                   decoration: const InputDecoration(
@@ -90,9 +91,9 @@ class _NewMealState extends State<NewMeal> {
                     List<Food> foods = [food1, food2, food3, food4, food5];
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                          content: Text(MealName + " added to todays meal's")),
+                          content: Text(mealName + " added to todays meal's")),
                     );
-                    addMeal(MealName, foods);
+                    addMeal(mealName, foods);
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
                     Navigator.pop(context);
@@ -127,11 +128,12 @@ class NewFoodField extends StatelessWidget {
             child: TextFormField(
               controller: foodController,
               validator: (value) {
-                if (value != null || value!.isNotEmpty) {
+                if (value != null) {
                   return null;
                 }
+                return "Invalid food name";
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Food',
               ),
@@ -140,7 +142,7 @@ class NewFoodField extends StatelessWidget {
           SizedBox(
             width: 100,
             child: Container(
-              margin: EdgeInsets.all(4),
+              margin: const EdgeInsets.all(4),
               child: TextFormField(
                 controller: caloriesController,
                 decoration: const InputDecoration(

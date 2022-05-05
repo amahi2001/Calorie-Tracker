@@ -552,10 +552,6 @@ class _AuthGateState extends State<AuthGate> {
 
         // Trigger the sign-in flow
         final authResult = await twitterLogin.loginV2();
-        print(authResult.status);
-        if (authResult.status == TwitterLoginStatus.error) {
-          print(authResult.errorMessage);
-        }
 
         if (authResult.status == TwitterLoginStatus.loggedIn) {
           // Create a credential from the access token

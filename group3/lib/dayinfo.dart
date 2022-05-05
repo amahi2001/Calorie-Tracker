@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:group3/firestore.dart';
 
-import 'mealcard.dart';
-import 'newmeal.dart';
-
 class DayInfo extends StatelessWidget {
-  const DayInfo({Key? key, required this.meals, required this.date})
+  const DayInfo({Key? key, required this.meals, required this.date, required this.totalCalories})
       : super(key: key);
   final List<Meal> meals;
   final String date;
+  final String totalCalories;
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text(date),
@@ -19,12 +18,12 @@ class DayInfo extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-            TodayTotal(total: '300', max: '1400'),
+            TodayTotal(total: totalCalories, max: '1500'),
             Container(
                 margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 alignment: Alignment.centerLeft,
                 child: Container(
-                  margin: EdgeInsets.all(15),
+                  margin: const EdgeInsets.all(15),
                   child: const Text(
                     "Your previous meals",
                     style: TextStyle(
@@ -61,8 +60,11 @@ class TodayTotal extends StatelessWidget {
       : super(key: key);
   final String total;
   final String max;
+
   @override
   Widget build(BuildContext context) {
+    int numericalTotal = int.parse(total);
+    int numericalMax = int.parse(max);
     return Column(
       children: [
         Container(
@@ -84,18 +86,20 @@ class TodayTotal extends StatelessWidget {
                     child: Stack(
                       children: <Widget>[
                         Center(
-                          child: Container(
+                          child: SizedBox(
                             width: 180,
                             height: 180,
                             child: CircularProgressIndicator(
-                              value: int.parse(total) / int.parse(max),
+                              color: numericalTotal >= numericalMax ? Colors.red :
+                                     numericalTotal >= numericalMax * .75 ? Colors.orange : null,
+                              value: numericalTotal / numericalMax,
                               strokeWidth: 15,
                             ),
                           ),
                         ),
                         Center(
                           child: Text(total,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 50,
                                 color: Colors.white,
@@ -184,7 +188,7 @@ class _OldMealCardState extends State<OldMealCard> {
               Visibility(
                 visible: isTapped,
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(50, 0, 100, 10),
+                  margin: const EdgeInsets.fromLTRB(50, 0, 100, 10),
                   child: Column(
                       children: List.generate(widget.foods.length, (index) {
                     return Row(

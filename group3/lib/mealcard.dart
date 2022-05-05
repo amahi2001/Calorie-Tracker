@@ -68,7 +68,7 @@ class _MealCardState extends State<MealCard> {
               Visibility(
                 visible: isTapped,
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(50, 0, 100, 10),
+                  margin: const EdgeInsets.fromLTRB(50, 0, 100, 10),
                   child: Column(
                       children: List.generate(widget.foods.length, (index) {
                     return Row(

@@ -120,17 +120,18 @@ class _Quickview extends State<QuickView> {
     meals = getData(widget.selectedDay);
   }
 
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: meals,
         builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
           if (!snapshot.hasData) {
-            return Text('Select a Day');
+            return const Text('Select a Day');
           } else {
-            int TotalCal = 0;
+            int totalCal = 0;
             for (var meal in snapshot.data!) {
               for (var food in meal.foods) {
-                TotalCal = TotalCal + int.parse(food.cal);
+                totalCal = totalCal + int.parse(food.cal);
               }
             }
             return Column(
@@ -142,7 +143,7 @@ class _Quickview extends State<QuickView> {
                 ),
                 QuickViewCard(
                   numberOfMeals: (snapshot.data?.length ?? 0).toString(),
-                  totalCal: TotalCal.toString(),
+                  totalCal: totalCal.toString(),
                   meals: snapshot.data!,
                   selectedDay: widget.selectedDay,
                 ),
@@ -176,17 +177,17 @@ class QuickViewCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
-              leading: Icon(Icons.dining_outlined),
+              leading: const Icon(Icons.dining_outlined),
               title: Text(
                 "Total Calories: " + totalCal,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
                   // fontWeight: FontWeight.bold,
                 ),
               ),
               subtitle: Text(
                 numberOfMeals + ' meals',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 15,
                 ),
               ),
@@ -202,6 +203,7 @@ class QuickViewCard extends StatelessWidget {
                         MaterialPageRoute(
                             builder: (context) => DayInfo(
                                   meals: meals,
+                                  totalCalories: totalCal,
                                   date: DateFormat('EEEE, MMM d, yyyy')
                                       .format(selectedDay),
                                 )));
@@ -221,8 +223,8 @@ class QuickViewCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: Icon(Icons.dining_outlined),
-                title: Text(
+                leading: const Icon(Icons.dining_outlined),
+                title: const Text(
                   "No meals logged on this day",
                   style: TextStyle(
                     fontSize: 20,
@@ -230,7 +232,7 @@ class QuickViewCard extends StatelessWidget {
                 ),
                 subtitle: Text(
                   numberOfMeals + ' meals',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 15,
                   ),
                 ),
