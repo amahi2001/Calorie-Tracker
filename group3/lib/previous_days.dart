@@ -14,24 +14,9 @@ class PreviousDays extends StatefulWidget {
 }
 
 class _PreviousDaysState extends State<PreviousDays> {
-  final TextEditingController _eventController = TextEditingController();
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
-
-
-  @override
-  void dispose() {
-    _eventController
-        .dispose(); //event controller should stop when page is kills
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    // selectedEvents = {};
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
