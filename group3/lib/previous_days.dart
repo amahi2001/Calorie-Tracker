@@ -15,13 +15,9 @@ class PreviousDays extends StatefulWidget {
 
 class _PreviousDaysState extends State<PreviousDays> {
   final TextEditingController _eventController = TextEditingController();
-  late Map<DateTime, List<Meal>> selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
-  List<Meal> _getEventsfromDay(DateTime day) {
-    return selectedEvents[day] ?? [];
-  }
 
 
   @override
@@ -33,7 +29,7 @@ class _PreviousDaysState extends State<PreviousDays> {
 
   @override
   void initState() {
-    selectedEvents = {};
+    // selectedEvents = {};
     super.initState();
   }
 
@@ -87,8 +83,6 @@ class _PreviousDaysState extends State<PreviousDays> {
 
             /* methods */
 
-            eventLoader: _getEventsfromDay,
-
             selectedDayPredicate: (day) {
               // Use `selectedDayPredicate` to determine which day is currently selected.
               // If this returns true, then `day` will be marked as selected.
@@ -133,7 +127,6 @@ class _Quickview extends State<QuickView> {
 
   void retrieveData(DateTime selectedDay) {
     meals = getData(selectedDay);
-    setState(() {});
   }
 
   @override
@@ -155,7 +148,6 @@ class _Quickview extends State<QuickView> {
                 TotalCal = TotalCal + int.parse(food.cal);
               }
             }
-            // List meals = [];
             return Column(
               children: [
                 const Divider(
@@ -200,8 +192,19 @@ class QuickViewCard extends StatelessWidget {
           children: <Widget>[
             ListTile(
               leading: Icon(Icons.dining_outlined),
-              title: Text("Total Calories: " + totalCal),
-              subtitle: Text(numberOfMeals + ' meals'),
+              title: Text(
+                "Total Calories: " + totalCal,
+                style: TextStyle(
+                  fontSize: 20,
+                  // fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(
+                numberOfMeals + ' meals',
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -234,8 +237,18 @@ class QuickViewCard extends StatelessWidget {
             children: <Widget>[
               ListTile(
                 leading: Icon(Icons.dining_outlined),
-                title: Text("No meals logged on this day"),
-                subtitle: Text(numberOfMeals + ' meals'),
+                title: Text(
+                  "No meals logged on this day",
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+                subtitle: Text(
+                  numberOfMeals + ' meals',
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
               )
             ],
           ),
