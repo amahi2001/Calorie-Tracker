@@ -45,43 +45,14 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return DefaultTabController(
         length: 3,
-        child: Builder(builder: (context) {
-          final controller = DefaultTabController.of(context)!;
-          controller.addListener(() {
-            if (controller.index == controller.length - 1) {
-              // showDialog<String>(
-              //   barrierDismissible: false,
-              //   context: context,
-              //   builder: (BuildContext context) => AlertDialog(
-              //     title: const Text('AlertDialog Title'),
-              //     content: const Text('AlertDialog description'),
-              //     actions: <Widget>[
-              //       TextButton(
-              //         onPressed: () {
-              //           controller.animateTo(0);
-              //           Navigator.pop(context, 'Cancel');
-              //         },
-              //         child: const Text('Cancel'),
-              //       ),
-              //       TextButton(
-              //         onPressed: () {
-              //           Navigator.pop(context, 'OK');
-              //         },
-              //         child: const Text('OK'),
-              //       ),
-              //     ],
-              //   ),
-              // );
-            }
-          });
-          return Scaffold(
+        child: Scaffold(
             appBar: AppBar(
               // Here we take the value from the MyHomePage object that was created by
               // the App.build method, and use it to set our appbar title.
               title: Text(widget.title),
               bottom: TabBar(
                 tabs: [
-                  const Tab(icon: Icon(Icons.home_outlined), text: 'home'),
+                  const Tab(icon: Icon(Icons.home_outlined), text: 'Home'),
                   const Tab(icon: Icon(Icons.history), text: 'Previous Days'),
                   TextButton(
                     style: TextButton.styleFrom(),
@@ -138,8 +109,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox.shrink() // need a widget for the logout tab
               ],
             ),
-          );
-        }));
+          ),
+        );
   }
 }
 
